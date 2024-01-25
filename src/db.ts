@@ -1,19 +1,25 @@
-const fs = require('fs');
-const { generateUniqueNumbersInRange } = require('./utils/utils');
-import { Driver } from './model/driver';
+import type { Driver } from './model/driver'
+const fs = require('fs')
+const { generateUniqueNumbersInRange } = require('./utils/utils')
 
-export function readDb() {
-  const rawData = fs.readFileSync('drivers.json');
+export function readDb (): Driver[] {
+  try {
+    const rawData: string = fs.readFileSync('drivers.json')
+    const jsonData: Driver[] = JSON.parse(rawData)
 
-  const jsonData: Driver[] = JSON.parse(rawData);
+    const places: number[] = generateUniqueNumbersInRange(1, 21, 21)
+    const driversData: Driver[] = places.length > 0
+      ? jsonData.map((driver, idx) => ({
+        ...driver,
+        imgUrl: `${driver.code.toLowerCase()}.png`,
+        place: places[idx]
+      }))
+      : []
 
-  const places = generateUniqueNumbersInRange(1, 21, 21);
-  const modifiedData: Driver[] = jsonData.map((driver, idx) => ({
-    ...driver,
-    imgUrl: `${driver.code.toLowerCase()}.png`,
-    place: places[idx],
-  }));
-
-  // console.log(modifiedData);
-  return modifiedData;
+    console.log(`Driver data length: ${driversData.length}`)
+    return driversData
+  } catch (error) {
+    console.log(`Error occurred during reading drivers data: ${String(error)}`)
+    return []
+  }
 }
