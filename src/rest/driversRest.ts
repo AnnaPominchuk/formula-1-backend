@@ -17,9 +17,12 @@ export async function overtake (req: Request, res: Response) {
     if (id >= 0) {
       const driverA = drivers.find((driver) => driver.id === id)
       if (driverA == null) {
-        console.log('Bad request: driver with corresponding id was not found')
+        console.log(
+          `Bad request: driver with corresponding id=${id} was not found`
+        )
         return res.status(404).send({
-          error: 'Bad request: driver with corresponding id was not found'
+          error:
+            `Bad request: driver with corresponding id=${id} was not found`
         })
       }
       if (driverA.place <= 1) {
